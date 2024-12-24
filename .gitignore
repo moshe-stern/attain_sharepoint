@@ -1,2 +1,6 @@
 output.csv
+.idea
+**/__pycache__/
+__pycache__/
 .env
+.venv
