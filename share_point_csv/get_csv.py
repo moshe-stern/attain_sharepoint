@@ -11,21 +11,20 @@ tenant_id = os.getenv("TENANT_ID")
 sharepoint_domain_name = os.getenv("SHARE_POINT_DOMAIN_NAME")
 resource = f"{os.getenv('RESOURCE')}/{sharepoint_domain_name}@{tenant_id}"
 
-file_path = f"/sites/bi/Shared Documents/Power Automate/FOR DIGACORE"
-sites= {
-    'bi':'bi',
-    'billing': 'billing'
-}
-file_urls = {
-    "attain": file_path + "/Attain TSS - Roster Files/Attain TSS - Roster Files.csv",
-    "kadiant": file_path
-    + "/Kadiant - Roster Files/Team Member Kadiant Roster IT Combined.csv",
+file_path_bi = f"/sites/bi/Shared Documents/Power Automate/FOR DIGACORE"
+payer_address_mapping = "/sites/billing/Shared%20Documents/Contracts%20&%20Fee%20Schedules/Payer%20Specific/Address%20Mapping/Payer%20Address%20Mapping.xlsx"
+attain_roster = '/sites/bi/Shared%20Documents/Power%20Automate/FOR%20DIGACORE/Attain%20TSS%20-%20Roster%20Files/Team%20Member%20TSS%20Roster%20IT%20Combined.csv'
+kadiant_roster = '/sites/bi/Shared%20Documents/Power%20Automate/FOR%20DIGACORE/Kadiant - Roster Files/Team Member Kadiant Roster IT Combined.csv'
+sharepoint_file_urls = {
+    "attain": attain_roster,
+    "kadiant": kadiant_roster,
+    'payer_address_mapping': payer_address_mapping
 }
 
 
-def get_csv(roster: str, site: str):
+def get_csv(file: str):
     headers = {"Authorization": f"Bearer {get_access_token()}", "Accept": "*/*"}
-    file_url = f"https://{sharepoint_domain_name}/sites/{sites[site]}/_api/web/GetFileByServerRelativeUrl('{file_urls[roster]}')/$value"
+    file_url = f"https://{sharepoint_domain_name}/{sharepoint_file_urls[file]}/_api/web/GetFileByServerRelativeUrl('{file}')/$value"
     file_response = requests.get(file_url, headers=headers)
     if file_response.status_code != 200:
         raise Exception("Failed to retrieve file:", file_response.text)
@@ -39,7 +38,7 @@ def get_access_token():
         "grant_type": "client_credentials",
         "client_id": client_id,
         "client_secret": client_secret,
-        "resource": "00000003-0000-0ff1-ce00-000000000000/attainaba.sharepoint.com@d82742c9-4dd4-4162-a3ef-7727c0d9d588",
+        "resource": f"{resource}/{sharepoint_domain_name}@{tenant_id}",
     }
     response = requests.post(token_url, data=data)
     if response.status_code == 200:

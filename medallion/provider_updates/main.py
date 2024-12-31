@@ -41,7 +41,7 @@ def medallion_provider_updates():
         "AT",
     )
     df = pd.DataFrame(updated_data_for_csv)
-    csv_file_path = "../../output.csv"
+    csv_file_path = "../output.csv"
     df.to_csv(csv_file_path, index=False)
 
 
@@ -54,7 +54,7 @@ def update_roster(
     id_prefix: str,
 ):
     payload: list[dict[str, str | None]] = []
-    csv = get_csv(roster, 'bi')
+    csv = get_csv(roster)
     df = pd.read_csv(csv)
     df = df.rename(columns=cols)
     df["Work_Email"] = df["Work_Email"].str.lower()

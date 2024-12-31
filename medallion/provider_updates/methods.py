@@ -1,19 +1,7 @@
 import math
-import os
-
-import requests
-from dotenv import load_dotenv
 from pandas import DataFrame
 
-if not load_dotenv():
-    raise Exception("Failed to load .env")
-headers = {
-    "Accept": "application/json",
-    "x-functions-key": os.getenv("FUNCTION_KEY"),
-}
-azure = os.getenv("FUNCTION_URL")
-local = "http://localhost:7071"
-base_url = local
+from medallion.api import medallion_api_patch_providers, medallion_api_get_emails
 
 
 def append(
@@ -49,31 +37,6 @@ def append(
         for key, value in entry.items():
             if isinstance(value, float) and math.isnan(value):
                 entry[key] = None
-
-
-def medallion_api_get_emails(offset: int):
-    response = requests.get(
-        f"{base_url}/api/providers/?email-string=true&offset={offset}",
-        headers=headers,
-    )
-    if not response.ok:
-        raise Exception(response.text)
-    return response.json()
-
-
-def medallion_api_patch_providers(data: list[dict[str, str]]):
-    response = requests.patch(
-        f"{base_url}/api/providers",
-        headers={
-            **headers,
-            "Content-Type": "application/json",
-        },
-        json=data,
-    )
-    if not response.ok:
-        raise Exception(response.text)
-    return response.json()
-
 
 def get_email_str():
     count: int = 0

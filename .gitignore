@@ -1,4 +1,4 @@
-output.csv
+medallion/output.csv
 .idea
 **/__pycache__/
 __pycache__/
